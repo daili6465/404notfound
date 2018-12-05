@@ -30,7 +30,7 @@ server <- function(input, output) {
   output$word_cloud <- renderPlot({
     df_matrix <- terms()
     wordcloud_rep(names(df_matrix), df_matrix,
-      scale = c(3, 0.3), min.freq = input$freq,
+      scale = c(3, 0.3), min.freq=0,
       max.words = input$max, rot.per = 0.2, random.order = F,
       colors = brewer.pal(8, "Set2")
     )
@@ -51,7 +51,16 @@ server <- function(input, output) {
     make_pic(input$selection_map)
   })
   output$map_message <- renderText({
-    pop <- zip_counts(input$selection_map, input$text_map)
-    return(paste0("There are ", pop, "pets of this species licensed in the area."))
+    if (input$text_map == "") {
+      pop <- zip_counts(input$selection_map, "ALL")
+    } else {
+      pop <- zip_counts(input$selection_map, input$text_map)
+    }
+    return(paste0("There are ", pop, " pets of this species licensed in the area."))
+  })
+  
+  ## Server logic for the "Licences issued each year"
+  output$plot <- renderPlot({
+    plot_licenses_per_year(input$selection_plot)
   })
 }

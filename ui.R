@@ -12,15 +12,26 @@ fluidPage(
       12,
       tabsetPanel(
         tabPanel(
+          "Licenses issued by year",
+          fluidRow(
+            plotOutput("plot"),
+            hr(),
+            wellPanel(
+              selectInput("selection_plot", "Choose a species:", choices = species)
+            )
+          )
+        ),
+        tabPanel(
           "Population on map",
           fluidRow(
             hr(),
             plotOutput("map"),
+            # textOutput("map_message"),
             hr(),
             wellPanel(
-              selectInput("selection_map", "Choose a species:", choices = species),
-              textInput("text_map", HTML("Enter a 5-digit zip code within the City
-                                         of Seattle:<br/>(Enter \"ALL\" for all records available)"))
+              selectInput("selection_map", "Choose a species:", choices = species)
+              # textInput("text_map", HTML("Enter a 5-digit zip code within the City
+                                         # of Seattle:<br/>(Enter \"ALL\" for all records available)"))
             )
           )
         ),
@@ -37,11 +48,11 @@ fluidPage(
               actionButton("update", "Change")
             ),
 
-            column(6,
+            column(4,
               offset = 1,
-              sliderInput("freq", "Minimum Frequency:",
-                min = 1, max = 30, value = 10
-              ),
+              # sliderInput("freq", "Minimum Frequency:",
+               #  min = 1, max = 30, value = 10
+              # ),
               sliderInput("max", "Maximum Number of Words displayed:",
                 min = 1, max = 100, value = 50
               )
