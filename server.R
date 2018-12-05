@@ -1,9 +1,6 @@
 # This is the server file of a shiny app
-library(memoise)
-library(tm)
 library(wordcloud)
 library(SnowballC)
-library(dplyr)
 library(shiny)
 
 # Define server logic
@@ -29,7 +26,7 @@ server <- function(input, output) {
   # plot the word cloud
   output$word_cloud <- renderPlot({
     df_matrix <- terms()
-    wordcloud_rep(names(df_matrix), df_matrix,
+    wordcloud_rep(df_matrix$Var1, df_matrix$Freq,
       scale = c(3, 0.3), min.freq=0,
       max.words = input$max, rot.per = 0.2, random.order = F,
       colors = brewer.pal(8, "Set2")
@@ -37,14 +34,18 @@ server <- function(input, output) {
   })
 
   # display a textual output
+  output$prompt <- renderText({
+    return("Click here to update the result:")
+  })
   output$name_message <- renderText({
     return(paste0(
       "Top three most popular names of the chosen year(s) and pet species are: ",
-      names(terms())[1], ", ",
-      names(terms())[2], ", ",
-      names(terms()[3]), "."
+      terms()$Var1[1], ", ",
+      terms()$Var1[2], ", ",
+      terms()$Var1[3], "."
     ))
   })
+  
   ## Server logic for the `Population on map tab`
   # plot seattle map
   output$map <- renderPlot({

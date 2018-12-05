@@ -2,8 +2,6 @@ library(shiny)
 
 # libraries for word cloud
 library(memoise)
-library(tm)
-library(wordcloud)
 library(SnowballC)
 library(dplyr)
 # libraries for seattle map
@@ -37,15 +35,10 @@ filter_by_species <- function(df, selected_species) {
 # make term document matrix
 getTermMatrix <- memoise(function(selected_species) {
   df <- filter_by_species(df_original, selected_species)
-  dfCorpus <- VCorpus(VectorSource(df$Name))
-
-  dfCorpus <- tm_map(dfCorpus, removePunctuation)
-  dfCorpus <- tm_map(dfCorpus, removeNumbers)
-  dfCorpus <- tm_map(dfCorpus, PlainTextDocument)
-
-  df_matrix <- TermDocumentMatrix(dfCorpus)
-  df_matrix <- as.matrix(df_matrix)
-  df_matrix <- sort(rowSums(df_matrix), decreasing = TRUE)
+  tb <- table(df$Name)
+  tb <- as.data.frame(tb)
+  tb <- tb[4: nrow(tb), ]
+  tb <- arrange(tb, desc(Freq))
 })
 
 ## seattle map

@@ -1,0 +1,13 @@
+name: 404notfound
+title: 404notfound
+username:
+account: daili6465
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 604876
+bundleId: 1742681
+url: https://daili6465.shinyapps.io/404notfound/
+when: 1544022234.13753
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
