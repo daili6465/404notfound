@@ -42,9 +42,7 @@ getTermMatrix <- memoise(function(selected_species) {
 })
 
 ## seattle map
-register_google(key = "AIzaSyBk6QtXerwJ_YXJoYRtl2Kl1uitegbVHy4")
-
-# pets <- select(fm, zip, Species)
+register_google(key = readRDS("my_key.rda"))
 
 make_pic <- function(given_species) {
   data <- filter_by_species(df_original, given_species)
