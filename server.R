@@ -6,10 +6,11 @@ library(SnowballC)
 library(dplyr)
 library(shiny)
 
-# Define server logic required to draw a word cloud
+# Define server logic
 server <- function(input, output) {
+  ## Server logic for the `Names as word cloud tab`
   # Define a reactive expression for the document term matrix
-  terms <- reactive ({
+  terms <- reactive({
     # change when the "update" button is pressed...
     input$update
     # ...but not for anything else
@@ -17,24 +18,40 @@ server <- function(input, output) {
       withProgress({
         # display this message when the graph is still rendering
         setProgress(message = "Processing corpus...")
-        x <- getTermMatrix(input$selection)
+        x <- getTermMatrix(input$selection_wordcloud)
       })
     })
   })
-  
+
   # make a wordcloud drawing predictable during a session
   wordcloud_rep <- repeatable(wordcloud)
-  
+
   # plot the word cloud
-  output$plot <- renderPlot({
+  output$word_cloud <- renderPlot({
     df_matrix <- terms()
-    wordcloud_rep(names(df_matrix), df_matrix, scale = c(3, 0.3), min.freq = input$freq, 
-                  max.words = input$max, rot.per = 0.2, random.order = F,
-                  colors = brewer.pal(8, "Set2"))
+    wordcloud_rep(names(df_matrix), df_matrix,
+      scale = c(3, 0.3), min.freq = input$freq,
+      max.words = input$max, rot.per = 0.2, random.order = F,
+      colors = brewer.pal(8, "Set2")
+    )
+  })
+
+  # display a textual output
+  output$name_message <- renderText({
+    return(paste0(
+      "Top three most popular names of the chosen year(s) and pet species are: ",
+      names(terms())[1], ", ",
+      names(terms())[2], ", ",
+      names(terms()[3]), "."
+    ))
+  })
+  ## Server logic for the `Population on map tab`
+  # plot seattle map
+  output$map <- renderPlot({
+    make_pic(input$selection_map)
+  })
+  output$map_message <- renderText({
+    pop <- zip_counts(input$selection_map, input$text_map)
+    return(paste0("There are ", pop, "pets of this species licensed in the area."))
   })
 }
-  # display a textual output
-  #output$message <- renderText({
-    #return(paste("In 2016, there were", number_of_reports, "cases of UFO sightings reported in the selected state(s)."))
-  #})
-#}

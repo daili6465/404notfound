@@ -5,26 +5,50 @@ library(shiny)
 # sets everything displayed in the app page
 fluidPage(
   # Application title
-  titlePanel("Names of Licensed Pets in Seattle"),
-  
-  sidebarLayout(
-    # sidebar with a slider and selection inputs
-    sidebarPanel(
-      selectInput("selection", "Choose a speices:", choices = species), 
-      actionButton("update", "Change"),
-      hr(), # horizontal ruler
-      sliderInput("freq", "Minimum Frequency:",
-                  min = 1, max = 50, value = 15),
-      sliderInput("max", "Maximum Number of Words displayed:",
-                  min = 1, max = 300, value = 100)
-    ),
-    
-    # Show word cloud
-    mainPanel(
-      #width = 7,
-      #height = 20,
-      plotOutput("plot")
-      #textOutput("message")
+  titlePanel("Seattle Pet Licenses"),
+
+  mainPanel(
+    column(
+      12,
+      tabsetPanel(
+        tabPanel(
+          "Population on map",
+          fluidRow(
+            hr(),
+            plotOutput("map"),
+            hr(),
+            wellPanel(
+              selectInput("selection_map", "Choose a species:", choices = species),
+              textInput("text_map", HTML("Enter a 5-digit zip code within the City
+                                         of Seattle:<br/>(Enter \"ALL\" for all records available)"))
+            )
+          )
+        ),
+        tabPanel(
+          "Names as word cloud",
+          fluidRow(
+            plotOutput("word_cloud"),
+            textOutput("name_message"),
+            hr(),
+            column(
+              5,
+              selectInput("selection_wordcloud", "Choose a speices:", choices = species),
+              br(),
+              actionButton("update", "Change")
+            ),
+
+            column(6,
+              offset = 1,
+              sliderInput("freq", "Minimum Frequency:",
+                min = 1, max = 30, value = 10
+              ),
+              sliderInput("max", "Maximum Number of Words displayed:",
+                min = 1, max = 100, value = 50
+              )
+            )
+          )
+        )
+      )
     )
   )
 )
