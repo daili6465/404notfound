@@ -87,9 +87,8 @@ plot_licenses_per_year <- function(selected_species) {
       group_by(Year, Species) %>% 
       summarise(n = n())
   }
-  
+
   pop <- calculate_population(Only_Date, selected_species)
-  
   ggplot(pop, aes(Year, n, size = n, color = Species)) +
     geom_point() + 
     labs(x="Year", y = "Number of Licenses issued per year", color = 'Species',size = "License Count") + 

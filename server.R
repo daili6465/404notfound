@@ -34,12 +34,9 @@ server <- function(input, output) {
   })
 
   # display a textual output
-  output$prompt <- renderText({
-    return("Click here to update the result:")
-  })
   output$name_message <- renderText({
     return(paste0(
-      "Top three most popular names of the chosen year(s) and pet species are: ",
+      "Top three most popular names of the chosen pet species are: ",
       terms()$Var1[1], ", ",
       terms()$Var1[2], ", ",
       terms()$Var1[3], "."
