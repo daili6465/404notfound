@@ -1,0 +1,97 @@
+library(shiny)
+
+# libraries for word cloud
+library(memoise)
+library(SnowballC)
+library(dplyr)
+# libraries for seattle map
+library(zipcode)
+library(tidyverse)
+library(ggplot2)
+library(devtools)
+library(ggmap)
+# libraries for population plot
+library(lubridate)
+
+# Make a list of species
+species <- list("All available data", "Dog", "Cat", "Goat", "Pig")
+
+# load file
+file_path <- "Seattle_Pet_Licenses.csv"
+df_original <- read.csv(file_path, stringsAsFactors = F, fileEncoding = "latin1")
+colnames(df_original)[3] <- "Name"
+colnames(df_original)[7] <- "zip"
+
+# filters for a species of choice
+filter_by_species <- function(df, selected_species) {
+  if (selected_species == "All available data") {
+    df <- df
+  } else {
+    df <- filter(df, Species == selected_species)
+  }
+}
+
+## word cloud
+# make term document matrix
+getTermMatrix <- memoise(function(selected_species) {
+  df <- filter_by_species(df_original, selected_species)
+  tb <- table(df$Name)
+  tb <- as.data.frame(tb)
+  tb <- tb[4: nrow(tb), ]
+  tb <- arrange(tb, desc(Freq))
+})
+
+## seattle map
+register_google(key = readRDS("my_key.rda"))
+
+make_pic <- function(given_species) {
+  data <- filter_by_species(df_original, given_species)
+  data <- select(data, zip, Species)
+  data$zip <- substr(data$zip, 1, 5)
+  counts <- table(data$zip)
+  counts_total <- as.data.frame(counts)
+  names(counts_total)[1] <- "zip"
+  names(counts_total)[2] <- "count"
+  data(zipcode)
+  animals <- left_join(counts_total, zipcode, by = "zip") %>%
+    filter(state == "WA")
+  map.seattle_city <- qmap("seattle",
+    zoom = 11, source = "stamen",
+    maptype = "toner", darken = c(.3, "#BBBBBB")
+  )
+  map.seattle_city +
+    geom_point(data = animals, aes(longitude, latitude, color = count), alpha = 0.8, size = 4) +
+    scale_color_distiller(palette = "Reds", trans = "reverse")
+}
+
+zip_counts <- function(selected_species, given_zip) {
+  if (given_zip == "ALL" | missing(given_zip)) {
+    df <- df_original
+  } else {
+    df <- filter_by_species(df_original, selected_species) %>%
+      filter(substr(df$zip, 1, 5) == given_zip)
+  }
+  return(nrow(df))
+}
+
+## make a plot of population vs. year
+plot_licenses_per_year <- function(selected_species) {
+  # selected_species = "All available data"
+  # extract relevant data
+  Only_Date <- select(df_original, License.Issue.Date, Species)
+  # create `date`` and `Year`` columns
+  Only_Date$date <- mdy(Only_Date$License.Issue.Date)
+  Only_Date$Year <- year(Only_Date$date)
+  calculate_population <- function(df, selected_species) {
+    license_count <- filter_by_species(df, selected_species) %>%
+      group_by(Year, Species) %>% 
+      summarise(n = n())
+  }
+
+  pop <- calculate_population(Only_Date, selected_species)
+  ggplot(pop, aes(Year, n, size = n, color = Species)) +
+    geom_point() + 
+    labs(x="Year", y = "Number of Licenses issued per year", color = 'Species',size = "License Count") + 
+    scale_color_brewer(type = 'div', palette = 'Spectral')
+}
+
