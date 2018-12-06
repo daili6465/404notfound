@@ -46,7 +46,7 @@ fluidPage(
               selectInput("selection_wordcloud", "Choose a speices:", choices = species),
               br(),
               textOutput("prompt"),
-              actionButton("update", "Change")
+              actionButton("update", "Update")
             ),
 
             column(4,

@@ -42,9 +42,7 @@ getTermMatrix <- memoise(function(selected_species) {
 })
 
 ## seattle map
-register_google(key = "AIzaSyBk6QtXerwJ_YXJoYRtl2Kl1uitegbVHy4")
-
-# pets <- select(fm, zip, Species)
+register_google(key = readRDS("my_key.rda"))
 
 make_pic <- function(given_species) {
   data <- filter_by_species(df_original, given_species)
@@ -89,9 +87,8 @@ plot_licenses_per_year <- function(selected_species) {
       group_by(Year, Species) %>% 
       summarise(n = n())
   }
-  
+
   pop <- calculate_population(Only_Date, selected_species)
-  
   ggplot(pop, aes(Year, n, size = n, color = Species)) +
     geom_point() + 
     labs(x="Year", y = "Number of Licenses issued per year", color = 'Species',size = "License Count") + 
