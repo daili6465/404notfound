@@ -6,6 +6,6 @@ Another thing we found interesting was the discrepancies among numbers of pets r
 
 Dataset: https://data.seattle.gov/Community/Seattle-Pet-Licenses/jguv-t9rb
 
-Shiny app: https://daili6465.shinyapps.io/404notfound/
+Shiny app: https://daili6465.shinyapps.io/404notfound/ (Note: the app might take a while to generate plots. Thanks for your patience!)
 
 ![](pets.jpeg)
