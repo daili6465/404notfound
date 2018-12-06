@@ -48,15 +48,7 @@ server <- function(input, output) {
   output$map <- renderPlot({
     make_pic(input$selection_map)
   })
-  output$map_message <- renderText({
-    if (input$text_map == "") {
-      pop <- zip_counts(input$selection_map, "ALL")
-    } else {
-      pop <- zip_counts(input$selection_map, input$text_map)
-    }
-    return(paste0("There are ", pop, " pets of this species licensed in the area."))
-  })
-  
+
   ## Server logic for the "Licences issued each year"
   output$plot <- renderPlot({
     plot_licenses_per_year(input$selection_plot)

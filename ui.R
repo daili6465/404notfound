@@ -11,6 +11,7 @@ fluidPage(
     column(
       12,
       tabsetPanel(
+        # create a tab that plots number of licenses vs. year
         tabPanel(
           "Licenses issued by year",
           fluidRow(
@@ -21,20 +22,20 @@ fluidPage(
             )
           )
         ),
+        # create a tab that maps population on Seattle map by zip code
         tabPanel(
           "Population on map",
           fluidRow(
             hr(),
             plotOutput("map"),
-            # textOutput("map_message"),
+            textOutput("map_message"),
             hr(),
             wellPanel(
               selectInput("selection_map", "Choose a species:", choices = species)
-              # textInput("text_map", HTML("Enter a 5-digit zip code within the City
-                                         # of Seattle:<br/>(Enter \"ALL\" for all records available)"))
             )
           )
         ),
+        # creates a tab that generates a word cloud of pet names
         tabPanel(
           "Names as word cloud",
           fluidRow(
@@ -51,9 +52,6 @@ fluidPage(
 
             column(4,
               offset = 1,
-              # sliderInput("freq", "Minimum Frequency:",
-               #  min = 1, max = 30, value = 10
-              # ),
               sliderInput("max", "Maximum Number of Words displayed:",
                 min = 1, max = 100, value = 50
               )
